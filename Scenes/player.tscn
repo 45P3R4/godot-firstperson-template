@@ -1,0 +1,67 @@
+[gd_scene load_steps=11 format=3 uid="uid://bd5v6py7keiiq"]
+
+[ext_resource type="Script" path="res://Scripts/Player/Camera.cs" id="1_02tyf"]
+[ext_resource type="Script" path="res://Scripts/Player/Player.cs" id="1_26yc0"]
+[ext_resource type="Script" path="res://Scripts/StateMachine.cs" id="7_ju0y3"]
+[ext_resource type="Script" path="res://Scripts/Player/Movement/PlayerMovementGrounded.cs" id="8_n00qp"]
+[ext_resource type="Script" path="res://Scripts/Player/Movement/PlayerMovementIdle.cs" id="9_hgku5"]
+[ext_resource type="Script" path="res://Scripts/Player/Movement/PlayerMovementWalk.cs" id="10_ro4mx"]
+[ext_resource type="Script" path="res://Scripts/Player/Movement/PlayerMovementRun.cs" id="11_33753"]
+[ext_resource type="Script" path="res://Scripts/Player/Movement/PlayerMovementJump.cs" id="12_pe6a0"]
+[ext_resource type="Script" path="res://Scripts/Player/Movement/PlayerMovementInAir.cs" id="13_1twm2"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_j8ojb"]
+radius = 0.4
+height = 1.7
+
+[node name="Player" type="Node3D"]
+
+[node name="Player" type="Node3D" parent="."]
+script = ExtResource("1_26yc0")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+wall_min_slide_angle = 0.0
+floor_constant_speed = true
+floor_max_angle = 0.872665
+
+[node name="Cam" type="Node3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D/Cam"]
+transform = Transform3D(1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_j8ojb")
+
+[node name="Scripts" type="Node3D" parent="CharacterBody3D"]
+
+[node name="Camera" type="Node3D" parent="CharacterBody3D/Scripts" node_paths=PackedStringArray("cam")]
+script = ExtResource("1_02tyf")
+cam = NodePath("../../Cam/Camera3D")
+sensetive_x = 0.005
+sensetive_y = 0.005
+
+[node name="PlayerMovementStateMachine" type="Node3D" parent="CharacterBody3D" node_paths=PackedStringArray("initialState")]
+script = ExtResource("7_ju0y3")
+initialState = NodePath("PlayerMovementIdle")
+
+[node name="PlayerMovementIdle" type="Node3D" parent="CharacterBody3D/PlayerMovementStateMachine"]
+script = ExtResource("9_hgku5")
+
+[node name="PlayerMovementWalk" type="Node3D" parent="CharacterBody3D/PlayerMovementStateMachine"]
+script = ExtResource("10_ro4mx")
+speed = 3.0
+
+[node name="PlayerMovementRun" type="Node3D" parent="CharacterBody3D/PlayerMovementStateMachine"]
+script = ExtResource("11_33753")
+speed = 5.0
+
+[node name="PlayerMovementJump" type="Node3D" parent="CharacterBody3D/PlayerMovementStateMachine"]
+script = ExtResource("12_pe6a0")
+jump_enegry = 4.0
+
+[node name="PlayerMovementGrounded" type="Node3D" parent="CharacterBody3D/PlayerMovementStateMachine"]
+script = ExtResource("8_n00qp")
+
+[node name="PlayerMovementInAir" type="Node3D" parent="CharacterBody3D/PlayerMovementStateMachine"]
+script = ExtResource("13_1twm2")
